@@ -1,0 +1,46 @@
+{
+  "name": "aha-develop.circleCI",
+  "description": "CircleCI View",
+  "version": "0.0.0",
+  "author": "aha-develop",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aha-develop/circleci"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@aha-app/aha-develop-react": "^1.0.6",
+    "axios": "^0.21.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^16.8.0",
+    "@types/lodash": "^4.14.175",
+    "prettier": "^2.3.2"
+  },
+  "ahaExtension": {
+    "contributes": {
+      "views": {
+        "circleCIAttribute": {
+          "title": "CircleCI",
+          "entryPoint": "src/views/circleCIAttribute.tsx",
+          "host": "attribute",
+          "recordTypes": [
+            "Feature",
+            "Requirement",
+            "Epic"
+          ]
+        }
+      },
+      "endpoints": {
+        "circleCIHook": {
+          "title": "Hook from CircleCI",
+          "entryPoint": "src/endpoints/circleCIHook.ts",
+          "public": true
+        }
+      }
+    }
+  }
+}
