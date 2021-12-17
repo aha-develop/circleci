@@ -33,6 +33,6 @@ declare interface IBranchType {
 }
 declare interface ICircleCIFields {
   project?: string;
-  branches?: IBranchType[];
+  builds?: IBranchType[];
   permalink?: string; // Redirect link to CircleCI
 }
