@@ -13,13 +13,11 @@
     "axios": "^0.21.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "react": "^17.0.2",
-    "recharts": "^2.1.5"
+    "react": "^17.0.2"
   },
   "devDependencies": {
     "@types/react": "^16.8.0",
     "@types/lodash": "^4.14.175",
-    "@types/recharts": "^1.8.23",
     "prettier": "^2.3.2"
   },
   "ahaExtension": {
