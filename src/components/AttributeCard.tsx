@@ -98,7 +98,7 @@ const AttributeCard = (props: AttributeCardProps) => {
       {branches.map((branch, index) => (
         <aha-tooltip type="popover" hover-show hover-hide style={{ width: '100%' }}>
           <div slot="trigger" style={{ width: '100%' }}>
-            <aha-flex justify-content="space-between" align-items="center" gap="8px" onClick={(e) => window.open(branch.permalink, '_blank')} style={{ padding: '8px 0', borderTop: index === 0 ? '' : '1px solid var(--theme-light-border)'}}>
+            <aha-flex justify-content="space-between" align-items="center" gap="8px" onClick={(e) => window.open(branch.permalink, '_blank', 'noopener,noreferrer')} style={{ padding: '8px 0', borderTop: index === 0 ? '' : '1px solid var(--theme-light-border)'}}>
               <IconText
                 icon="fa-regular fa-code-branch"
                 text={branch.branch}
