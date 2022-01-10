@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { calcTimeElapsed } from "@helpers/dateTime";
 
 export type AttributeCardProps = {
-  branches?: IBranchType[];
+  builds?: IBuildType[];
 };
 
 export const IconText = (props: {
@@ -82,7 +82,7 @@ const HoverCard = (props: {
 };
 
 const AttributeCard = (props: AttributeCardProps) => {
-  const branches = props.branches.sort(
+  const builds = props.builds.sort(
     (a, b) =>
       new Date(b.happened_at).getTime() - new Date(a.happened_at).getTime()
   ); // Sort(Descending) by happened_at
@@ -95,31 +95,31 @@ const AttributeCard = (props: AttributeCardProps) => {
         cursor: "pointer",
       }}
     >
-      {branches.map((branch, index) => (
+      {builds.map((build, index) => (
         <aha-tooltip type="popover" hover-show hover-hide style={{ width: '100%' }}>
           <div slot="trigger" style={{ width: '100%' }}>
-            <aha-flex justify-content="space-between" align-items="center" gap="8px" onClick={(e) => window.open(branch.permalink, '_blank', 'noopener,noreferrer')} style={{ padding: '8px 0', borderTop: index === 0 ? '' : '1px solid var(--theme-light-border)'}}>
+            <aha-flex justify-content="space-between" align-items="center" gap="8px" onClick={(e) => window.open(build.permalink, '_blank', 'noopener,noreferrer')} style={{ padding: '8px 0', borderTop: index === 0 ? '' : '1px solid var(--theme-light-border)'}}>
               <IconText
                 icon="fa-regular fa-code-branch"
-                text={branch.branch}
+                text={build.branch}
                 style={{ flexGrow: 1 }}
                 iconStyle={{ color: "#1082d5" }}
               />
               <StatusIcon
-                status={branch.status === "success" ? true : false}
+                status={build.status === "success" ? true : false}
               />
               <IconText
                 icon="fa-regular fa-clock type-icon"
-                text={calcTimeElapsed(branch.happened_at)}
+                text={calcTimeElapsed(build.happened_at)}
                 iconStyle={{ color: "#1082d5" }}
               />
             </aha-flex>
           </div>
           <HoverCard
-            buildNum={branch.buildNum}
-            author={branch.author.name || "Unknown"}
-            commit={branch.commit || "Unknown"}
-            workflow={branch.workflow}
+            buildNum={build.buildNum}
+            author={build.author.name || "Unknown"}
+            commit={build.commit || "Unknown"}
+            workflow={build.workflow}
             style={{ top: `${-5 + 40 * (index - 1)}px` }}
           />
         </aha-tooltip>

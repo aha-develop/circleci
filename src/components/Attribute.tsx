@@ -34,7 +34,7 @@ const Attribute = ({ fields, record }: AttributeProps) => {
               </span>
             </aha-flex>
           )}
-          {fields.builds && <AttributeCard branches={fields.builds} />}
+          {fields.builds && <AttributeCard builds={fields.builds} />}
         </> :
         <EmptyState record={record} />
       }
