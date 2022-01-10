@@ -1,6 +1,6 @@
-import _ from "lodash";
+import { isArray, findIndex } from "lodash";
 import { IDENTIFIER, CIRCLECI_URL } from "./config";
-import { getRecord } from "./getRecord";
+import { getRecords } from "./getRecord";
 import { setExtensionFields } from "./setExtensionFields";
 
 export class WebhookMgr {
@@ -11,17 +11,18 @@ export class WebhookMgr {
    * @param payload
    */
   static webhookHandler = async ({ headers, payload }, { identifier, settings }) => {
-    let fields: ICircleCIFields = {};
-    const arrNames = [payload.pipeline.vcs.commit.body || "", payload.pipeline.vcs.commit.subject || "", payload.pipeline.vcs.branch];
     //Accepts only brances that follow Aha! naming convention
-    const record = await getRecord(arrNames);
-    if (record) {
-      const project = await record.getExtensionField(identifier, "project");
+    const arrNames = [payload.pipeline.vcs.commit.body || "", payload.pipeline.vcs.commit.subject || "", payload.pipeline.vcs.branch];
+    const records = await getRecords(arrNames);
+
+    records.forEach(async (record) => {
+      const fields: ICircleCIFields = {
+        permalink: `${CIRCLECI_URL}/${payload.project.slug}`,
+        project: payload.project.name
+      };
+
       const builds = await record.getExtensionField(identifier, "builds");
-      const permalink = await record.getExtensionField(identifier, "permalink");
-      fields.permalink = `${CIRCLECI_URL}/${payload.project.slug}`;
-      fields.project = project || payload.project.name;
-      const buildInfo = {
+      const buildInfo: IBuildType = {
         branch: payload.pipeline.vcs.branch,
         type: payload.type,
         status: payload.workflow.status,
@@ -32,26 +33,24 @@ export class WebhookMgr {
         buildNum: payload.pipeline.number,
         permalink: payload.workflow.url
       }
+
       //Update only if build type is "work-completed", excluding "job-completed"
       if (payload.type !== "workflow-completed") {
         return;
       }
-      //If branch is array object
-      if (_.isArray(builds)) {
-        const buildIndex = _.findIndex(builds, (item) => {
+
+      //If builds is array object
+      if (isArray(builds)) {
+        const buildIndex = findIndex(builds, (item) => {
           return item.branch === buildInfo.branch;
         })
-        //If branch exists
+
+        //If build exists
         if (buildIndex >= 0) {
           fields.builds = [...builds]
           fields.builds[buildIndex] = {
             ...builds[buildIndex],
-            happened_at: buildInfo.happened_at,
-            commit: buildInfo.commit,
-            author: { name: payload.pipeline.vcs.commit.author.name },
-            buildNum: payload.pipeline.number,
-            status: payload.workflow.status,
-            workflow: payload.workflow.name
+            ...buildInfo
           }
         } else {
           fields.builds = [...builds ?? []];
@@ -60,11 +59,9 @@ export class WebhookMgr {
       } else {
         fields.builds = [buildInfo];
       }
-      await setExtensionFields(record, fields, identifier);
-    } else {
-      console.log("======== Record not found")
-    }
 
+      await setExtensionFields(record, fields, identifier);
+    })
   };
 
   constructor(private resource: ICircleCIEventType, private payload: any, private identifier = IDENTIFIER) { }
