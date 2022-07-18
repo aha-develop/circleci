@@ -67,13 +67,13 @@ export class WebhookMgr {
         fields.builds = [buildInfo];
       }
 
-      if (buildInfo.status === "success") {
-        aha.triggerAutomationOn(record, `${identifier}.buildPassed`, true);
-      } else {
-        aha.triggerAutomationOn(record, `${identifier}.buildFailed`, true);
-      }
-
       await setExtensionFields(record, fields, identifier);
+
+      if (buildInfo.status === "success") {
+        await aha.triggerAutomationOn(record, `${identifier}.buildPassed`, true);
+      } else {
+        await aha.triggerAutomationOn(record, `${identifier}.buildFailed`, true);
+      }
     });
   };
 
