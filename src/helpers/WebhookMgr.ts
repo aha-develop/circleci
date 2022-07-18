@@ -10,15 +10,22 @@ export class WebhookMgr {
    * @param headers
    * @param payload
    */
-  static webhookHandler = async ({ headers, payload }, { identifier, settings }) => {
+  static webhookHandler = async (
+    { headers, payload },
+    { identifier, settings }
+  ) => {
     //Accepts only brances that follow Aha! naming convention
-    const arrNames = [payload.pipeline.vcs.commit.body || "", payload.pipeline.vcs.commit.subject || "", payload.pipeline.vcs.branch];
+    const arrNames = [
+      payload.pipeline.vcs.commit.body || "",
+      payload.pipeline.vcs.commit.subject || "",
+      payload.pipeline.vcs.branch,
+    ];
     const records = await getRecords(arrNames);
 
     records.forEach(async (record) => {
       const fields: ICircleCIFields = {
         permalink: `${CIRCLECI_URL}/${payload.project.slug}`,
-        project: payload.project.name
+        project: payload.project.name,
       };
 
       const builds = await record.getExtensionField(identifier, "builds");
@@ -31,8 +38,8 @@ export class WebhookMgr {
         commit: payload.pipeline.vcs.commit.subject,
         author: { name: payload.pipeline.vcs.commit.author.name },
         buildNum: payload.pipeline.number,
-        permalink: payload.workflow.url
-      }
+        permalink: payload.workflow.url,
+      };
 
       //Update only if build type is "work-completed", excluding "job-completed"
       if (payload.type !== "workflow-completed") {
@@ -43,17 +50,17 @@ export class WebhookMgr {
       if (isArray(builds)) {
         const buildIndex = findIndex(builds, (item) => {
           return item.branch === buildInfo.branch;
-        })
+        });
 
         //If build exists
         if (buildIndex >= 0) {
-          fields.builds = [...builds]
+          fields.builds = [...builds];
           fields.builds[buildIndex] = {
             ...builds[buildIndex],
-            ...buildInfo
-          }
+            ...buildInfo,
+          };
         } else {
-          fields.builds = [...builds ?? []];
+          fields.builds = [...(builds ?? [])];
           fields.builds.push(buildInfo);
         }
       } else {
@@ -61,9 +68,12 @@ export class WebhookMgr {
       }
 
       await setExtensionFields(record, fields, identifier);
-    })
+    });
   };
 
-  constructor(private resource: ICircleCIEventType, private payload: any, private identifier = IDENTIFIER) { }
-
+  constructor(
+    private resource: ICircleCIEventType,
+    private payload: any,
+    private identifier = IDENTIFIER
+  ) {}
 }
