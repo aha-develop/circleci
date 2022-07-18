@@ -40,6 +40,14 @@
           "entryPoint": "src/endpoints/circleCIHook.ts",
           "public": true
         }
+      },
+      "automationTriggers": {
+        "buildPassed": {
+          "title": "Build passed"
+        },
+        "buildFailed": {
+          "title": "Build failed"
+        }
       }
     }
   }
