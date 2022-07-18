@@ -41,7 +41,7 @@ export class WebhookMgr {
         permalink: payload.workflow.url,
       };
 
-      //Update only if build type is "work-completed", excluding "job-completed"
+      // Update only if build type is "work-completed", excluding "job-completed"
       if (payload.type !== "workflow-completed") {
         return;
       }
@@ -65,6 +65,12 @@ export class WebhookMgr {
         }
       } else {
         fields.builds = [buildInfo];
+      }
+
+      if (buildInfo.status === "success") {
+        aha.triggerAutomationOn(record, `${identifier}.buildPassed`, true);
+      } else {
+        aha.triggerAutomationOn(record, `${identifier}.buildFailed`, true);
       }
 
       await setExtensionFields(record, fields, identifier);
