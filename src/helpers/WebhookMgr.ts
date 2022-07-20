@@ -41,7 +41,7 @@ export class WebhookMgr {
         permalink: payload.workflow.url,
       };
 
-      // Update only if build type is "work-completed", excluding "job-completed"
+      // Update only if build type is "workflow-completed", excluding "job-completed"
       if (payload.type !== "workflow-completed") {
         return;
       }
